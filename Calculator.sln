@@ -1,0 +1,163 @@
+using System;
+
+namespace Calculator
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Zlomek zl1 = new Zlomek(1, 2);
+            Zlomek zl2 = new Zlomek(1, 3);
+
+            Console.WriteLine($"{zl1.ToString()} ? {zl2.ToString()}");
+            Console.WriteLine($"+ = {Zlomek.Secti(zl1, zl2)}");
+            Console.WriteLine($"- = {Zlomek.Odecti(zl1, zl2)}");
+            Console.WriteLine($"* = {Zlomek.Vynasob(zl1, zl2)}");
+            Console.WriteLine($"/ = {Zlomek.Vydel(zl1, zl2)}");
+
+            Console.WriteLine();
+            int[,] a = new int[,] { { 1, 2 }, { 3, 4 } };
+            int[,] b = new int[,] { { 1, 2 }, { 3, 4 } };
+            Matice A = new Matice(a);
+            Matice B = new Matice(b);
+
+            Console.WriteLine(Matice.Secti(A, B).ToString());
+            Console.WriteLine(Matice.Vynasob(A, B).ToString());
+
+            Console.ReadKey();
+        }
+    }
+
+    public class Zlomek
+    {
+        private int citatel;
+        private int jmenovatel;
+
+        public Zlomek()
+        {
+            citatel = 0;
+            jmenovatel = 1;
+        }
+
+        public Zlomek(int citatel, int jmenovatel)
+        {
+            this.citatel = citatel;
+            this.jmenovatel = jmenovatel;
+        }
+
+        public override string ToString()
+        {
+            return $"{citatel}/{jmenovatel}";
+        }
+
+        public static Zlomek Secti(Zlomek a, Zlomek b)
+        {
+            Zlomek vysledek = new Zlomek();
+            vysledek.jmenovatel = a.jmenovatel * b.jmenovatel;
+            vysledek.citatel = (a.citatel * b.jmenovatel) + (b.citatel * a.jmenovatel);
+            return vysledek.NaZakladniTvar();
+        }
+
+        public static Zlomek Odecti(Zlomek a, Zlomek b)
+        {
+            Zlomek vysledek = new Zlomek();
+            vysledek.jmenovatel = a.jmenovatel * b.jmenovatel;
+            vysledek.citatel = (a.citatel * b.jmenovatel) - (b.citatel * a.jmenovatel);
+            return vysledek.NaZakladniTvar();
+        }
+
+        public static Zlomek Vynasob(Zlomek a, Zlomek b)
+        {
+            Zlomek vysledek = new Zlomek();
+            vysledek.citatel = a.citatel * b.citatel;
+            vysledek.jmenovatel = a.jmenovatel * b.jmenovatel;
+            return vysledek.NaZakladniTvar();
+        }
+
+        public static Zlomek Vydel(Zlomek a, Zlomek b)
+        {
+            Zlomek vysledek = new Zlomek();
+            vysledek.citatel = a.citatel * b.jmenovatel;
+            vysledek.jmenovatel = a.jmenovatel * b.citatel;
+            return vysledek.NaZakladniTvar();
+        }
+
+        private Zlomek NaZakladniTvar()
+        {
+            return this;
+        }
+    }
+
+    public class Matice
+    {
+        private int[,] data;
+
+        public Matice(int m, int n)
+        {
+            data = new int[m,n];
+        }
+
+        public Matice(int[,] data)
+        {
+            this.data = data;
+        }
+
+        public override string ToString()
+        {
+            string ret = "";
+            for (int i = 0; i < data.GetLength(0); i++)
+            {
+                for (int j = 0; j < data.GetLength(1); j++)
+                {
+                    ret += data[i, j];
+                    ret += " ";
+                }
+                ret += "\n";
+            }
+            return ret;
+        }
+
+        public static Matice Secti(Matice A, Matice B)
+        {
+            if (A.data.GetLength(0) == B.data.GetLength(0) && A.data.GetLength(1) == B.data.GetLength(1))
+            {
+                Matice vysledek = new Matice(A.data.GetLength(0), A.data.GetLength(1));
+                for (int i = 0; i < A.data.GetLength(0); i++)
+                {
+                    for (int j = 0; j < A.data.GetLength(1); j++)
+                    {
+                        vysledek.data[i,j] = A.data[i,j] + B.data[i,j];
+                    }
+                }
+                return vysledek;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+
+        public static Matice Vynasob(Matice A, Matice B)
+        {
+            if (A.data.GetLength(1) == B.data.GetLength(0))
+            {
+                Matice vysledek = new Matice(A.data.GetLength(0), B.data.GetLength(1));
+                for (int i = 0; i < vysledek.data.GetLength(0); i++)
+                {
+                    for (int j = 0; j < vysledek.data.GetLength(1); j++)
+                    {
+                        for (int z = 0; z < vysledek.data.GetLength(1); z++)
+                        {
+                            vysledek.data[i, j] += A.data[i, z] * B.data[z, j];
+                        }
+                    }
+                }
+                return vysledek;
+            }
+            else
+            {
+                throw new Exception();
+            }
+        }
+    }
+}
